@@ -26,6 +26,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     public boolean signUpUser(UserInfo userInfo) {
+
         if (userRepository.findByUsername(userInfo.getUsername()) != null) {
             return false;
         }
@@ -37,6 +38,7 @@ public class AuthService {
                 hashedPassword,
                 userInfo.getEmail(),
                 userInfo.getPhone(),
+                0,
                 new HashSet<>()
         ));
         return true;

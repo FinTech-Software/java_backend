@@ -20,16 +20,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthFilter jwtAuthFilter) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for stateless API
                 .cors(CorsConfigurer::disable)  // Disable CORS configuration (optional, you might want to enable CORS for frontend access)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/v1/login", "/auth/v1/signup").permitAll()  // Allow these paths without authentication
+                        .requestMatchers("/v1/auth/login", "/v1/auth/signup").permitAll()  // Allow these paths without authentication
                         .anyRequest().authenticated()  // Require authentication for other requests
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session
-                .httpBasic(Customizer.withDefaults())  // HTTP Basic authentication (for debugging, you might want to switch to JWT in production)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)  // HTTP Basic authentication (for debugging, you might want to switch to JWT in production)
                 .build();
     }
 

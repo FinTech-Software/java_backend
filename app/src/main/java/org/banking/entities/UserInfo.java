@@ -25,6 +25,7 @@ public class UserInfo {
 
     private String email;
     private String phone;
+    private double accountBalance;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
