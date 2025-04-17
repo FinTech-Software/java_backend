@@ -1,14 +1,15 @@
 package org.banking.service;
 
 import jakarta.transaction.Transactional;
+import org.banking.config.RabbitMQConfig;
 import org.banking.entities.UserInfo;
 import org.banking.entities.UserTransaction;
 import org.banking.repository.UserRepository;
 import org.banking.repository.UserTransactionRepository;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,49 +21,77 @@ public class TransactionService {
     @Autowired
     private UserTransactionRepository transactionRepository;
 
+    @Autowired
+    private AmqpTemplate rabbitTemplate;
+
+    /**
+     * Queue transaction for asynchronous processing
+     */
+    public String queueTransaction(UserTransaction transaction) {
+        Object response = rabbitTemplate.convertSendAndReceive(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.TXN_ROUTING_KEY,
+                transaction
+        );
+        if (response != null) {
+            return response.toString();  // This will be your final result message
+        } else {
+            return "Transaction failed or timed out.";
+        }
+    }
+
+
+    /**
+     * Actual transaction logic executed by the consumer
+     */
     @Transactional
     public String processTransaction(UserTransaction transaction) {
-        try{
-            //Fetching all the account balance
-            double senderBalance = transaction.getSender().getAccountBalance();
-            double receiverBalance = transaction.getReceiver().getAccountBalance();
+        try {
             double amount = transaction.getAmount();
+            UserInfo sender = transaction.getSender();
+            UserInfo receiver = transaction.getReceiver();
 
-            //Checking for insufficient balance
-            if(senderBalance<amount){
+            if (sender.getAccountBalance() < amount) {
                 return "Account balance is lower than the transaction amount.";
             }
-            //Starting a transaction
-            transaction.getSender().setAccountBalance(senderBalance-amount);
-            transaction.getReceiver().setAccountBalance(receiverBalance+amount);
 
-            //Save updated user information back to the repository
-            userRepository.save(transaction.getSender());
-            userRepository.save(transaction.getReceiver());
+            // Update balances
+            sender.setAccountBalance(sender.getAccountBalance() - amount);
+            receiver.setAccountBalance(receiver.getAccountBalance() + amount);
 
-            // Save the transaction
+            // Persist updates
+            userRepository.save(sender);
+            userRepository.save(receiver);
+
             transaction.setStatus(true);
             transactionRepository.save(transaction);
+
             return "Transaction processed successfully";
         } catch (Exception e) {
+            e.printStackTrace();
             return "Transaction processing failed";
         }
     }
 
+    /**
+     * Get account balance of logged-in user
+     */
     public Object getBalance(String username) {
-        try{
+        try {
             UserInfo userInfo = userRepository.findByUsername(username);
             return userInfo.getAccountBalance();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
     }
 
+    /**
+     * Get all transactions where user is sender or receiver
+     */
     public Object getTransactions(String username) {
-        try{
+        try {
             UserInfo userInfo = userRepository.findByUsername(username);
-            return transactionRepository
-                    .findBySenderOrReceiver(userInfo, userInfo);
+            return transactionRepository.findBySenderOrReceiver(userInfo, userInfo);
         } catch (Exception e) {
             return e.getMessage();
         }

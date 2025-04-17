@@ -3,6 +3,7 @@ package org.banking.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="users")
-public class UserInfo {
-
+public class UserInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "user_id")
     private String id;

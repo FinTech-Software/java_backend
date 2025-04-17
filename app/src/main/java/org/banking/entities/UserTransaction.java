@@ -3,6 +3,7 @@ package org.banking.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,8 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="transactions")
-public class UserTransaction {
+public class UserTransaction implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @Column(name="transaction_id")
     private String id;
