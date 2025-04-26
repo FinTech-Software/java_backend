@@ -16,7 +16,7 @@ public class TransactionConsumer {
     @RabbitListener(queues = RabbitMQConfig.TXN_QUEUE)
     public String receiveTransaction(UserTransaction transaction) {
         System.out.println("Received transaction: " + transaction.getId());
-
+        
         // Process the transaction asynchronously
         String result = transactionService.processTransaction(transaction);
         System.out.println("Transaction processed: " + result);
