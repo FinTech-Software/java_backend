@@ -78,7 +78,7 @@ public class TransactionService {
      */
     public Object getBalance(String username) {
         try {
-            UserInfo userInfo = userRepository.findByUsername(username);
+            UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
             return userInfo.getAccountBalance();
         } catch (Exception e) {
             return e.getMessage();
@@ -90,7 +90,7 @@ public class TransactionService {
      */
     public Object getTransactions(String username) {
         try {
-            UserInfo userInfo = userRepository.findByUsername(username);
+            UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
             return transactionRepository.findBySenderOrReceiver(userInfo, userInfo);
         } catch (Exception e) {
             return e.getMessage();

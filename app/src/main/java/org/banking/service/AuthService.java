@@ -1,5 +1,6 @@
 package org.banking.service;
 
+import jakarta.transaction.Transactional;
 import org.banking.entities.UserInfo;
 import org.banking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,13 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public boolean signUpUser(UserInfo userInfo) {
-
-        if (userRepository.findByUsername(userInfo.getUsername()) != null) {
-            return false;
-        }
-
+    @Transactional
+    public String registerUser(UserInfo userInfo) {
+        String userId = UUID.randomUUID().toString();
         String hashedPassword = passwordEncoder.encode(userInfo.getPassword());
+
         userRepository.save(new UserInfo(
-                UUID.randomUUID().toString(),
+                userId,
                 userInfo.getUsername(),
                 hashedPassword,
                 userInfo.getEmail(),
@@ -41,7 +40,11 @@ public class AuthService {
                 0,
                 new HashSet<>()
         ));
-        return true;
+        return userId;
+    }
+
+    public boolean userExists(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 
     public boolean loginUser(String username, String password) {
