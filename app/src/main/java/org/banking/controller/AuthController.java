@@ -1,6 +1,7 @@
 package org.banking.controller;
 
 import org.banking.entities.UserInfo;
+import org.banking.repository.SignupRequestDTO;
 import org.banking.request.JwtTokenRequestDTO;
 import org.banking.request.LoginRequestDTO;
 import org.banking.response.JwtResponseDTO;
@@ -29,14 +30,14 @@ public class AuthController {
 
 
     @PostMapping("v1/auth/signup")
-    public ResponseEntity<SignupResponseDTO> signup(@RequestBody UserInfo userInfo) {
+    public ResponseEntity<SignupResponseDTO> signup(@RequestBody SignupRequestDTO signupDto) {
         try {
-            if (authService.userExists(userInfo.getUsername())) {
+            if (authService.userExists(signupDto.getUsername())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new SignupResponseDTO("User already exists"));
             }
 
-            String userId = authService.registerUser(userInfo);
+            String userId = authService.registerUser(signupDto);
             return ResponseEntity.ok(new SignupResponseDTO("User registered successfully"));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
