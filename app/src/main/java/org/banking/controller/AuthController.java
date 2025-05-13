@@ -62,13 +62,19 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("v1/auth/validateToken")
-//    public ResponseEntity<?> validateToken(@RequestBody JwtTokenRequestDTO JwtTokenRequest) {
-//        try{
-//            boolean loginUser = jwtService.validateToken(JwtTokenRequest.getToken());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Exception occurred in User Service: " + e.getMessage());
-//        }
-//    }
+    @PostMapping("v1/auth/validateToken")
+    public ResponseEntity<?> validateToken(@RequestBody JwtTokenRequestDTO jwtTokenRequest) {
+        try {
+            String username = jwtService.extractUsername(jwtTokenRequest.getToken());
+            boolean isValid = !jwtService.isTokenExpired(jwtTokenRequest.getToken());
+            if (isValid) {
+                return ResponseEntity.ok("Token is valid");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is expired or invalid");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Token validation failed: " + e.getMessage());
+        }
+    }
 }
