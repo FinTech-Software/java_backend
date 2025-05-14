@@ -17,17 +17,17 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-    @Bean
-    CommandLineRunner initRoles(UserRoleRepository userRoleRepository) {
-        return args -> {
-            if (userRoleRepository.findByName("USER").isEmpty()) {
-                userRoleRepository.save(new UserRole("USER"));
-                System.out.println("USER role initialized.");
-            }
-            if (userRoleRepository.findByName("ADMIN").isEmpty()) {
-                userRoleRepository.save(new UserRole("ADMIN"));
-                System.out.println("ADMIN role initialized.");
-            }
-        };
-    }
+//    @Bean
+//    CommandLineRunner initRoles(UserRoleRepository userRoleRepository) {
+//        return args -> {
+//            if (userRoleRepository.findByName("USER").isEmpty()) {
+//                userRoleRepository.save(new UserRole("USER"));
+//                System.out.println("USER role initialized.");
+//            }
+//            if (userRoleRepository.findByName("ADMIN").isEmpty()) {
+//                userRoleRepository.save(new UserRole("ADMIN"));
+//                System.out.println("ADMIN role initialized.");
+//            }
+//        };
+//    }
 }

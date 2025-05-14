@@ -1,16 +1,17 @@
-package org.banking.request;
+package org.banking.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class UserRequestDTO {
+public class UserDetailsResponseDTO {
+    private String id;
     private String username;
+    private String email;
+    private double balance;
 }

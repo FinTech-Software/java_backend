@@ -58,6 +58,7 @@ public class AuthController {
             String jwtToken = jwtService.generateToken(loginRequest.getUsername());
             return ResponseEntity.ok(new LoginResponseDTO(jwtToken,"Login successful"));
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new LoginResponseDTO(null, "An unexpected error occurred. Please try again."));
         }

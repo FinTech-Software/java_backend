@@ -39,7 +39,7 @@ public class AuthService {
                 signupDto.getEmail() == null || signupDto.getPhone() == null) {
             throw new IllegalArgumentException("Missing required user fields");
         }
-
+    
         String userId = UUID.randomUUID().toString();
         String hashedPassword = passwordEncoder.encode(signupDto.getPassword());
 
