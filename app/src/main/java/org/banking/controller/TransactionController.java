@@ -43,6 +43,7 @@ public class TransactionController {
             transaction.setSender(sender);
             transaction.setReceiver(receiver);
             transaction.setAmount(request.getAmount());
+            transaction.setDescription(request.getDescription());
             transaction.setStatus(false);
             transaction.setDate(LocalDateTime.now());
 

@@ -30,6 +30,8 @@ public class UserTransaction implements Serializable {
 
     private int amount;
 
+    private String description;
+
     private LocalDateTime date;
 
     private Boolean status;

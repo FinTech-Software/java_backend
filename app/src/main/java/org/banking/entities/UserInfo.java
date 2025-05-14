@@ -20,10 +20,13 @@ public class UserInfo implements Serializable {
     private String id;
 
     @Getter
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
 
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(unique = true, nullable = false)
     private String phone;
     private double accountBalance;
 

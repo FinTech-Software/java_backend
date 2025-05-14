@@ -54,7 +54,7 @@ public class AuthService {
         roles.add(role);
 
         UserInfo user = new UserInfo(userId, signupDto.getUsername(), hashedPassword,
-                signupDto.getEmail(), signupDto.getPhone(), 0.0, roles);
+                signupDto.getEmail(), signupDto.getPhone(), 5000.00, roles);
 
         userRepository.save(user);
         return userId;
