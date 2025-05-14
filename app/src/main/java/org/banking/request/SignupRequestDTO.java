@@ -1,4 +1,4 @@
-package org.banking.repository;
+package org.banking.request;
 
 import lombok.Data;
 

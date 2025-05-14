@@ -1,10 +1,8 @@
 package org.banking.controller;
 
-import org.banking.entities.UserInfo;
-import org.banking.repository.SignupRequestDTO;
+import org.banking.request.SignupRequestDTO;
 import org.banking.request.JwtTokenRequestDTO;
 import org.banking.request.LoginRequestDTO;
-import org.banking.response.JwtResponseDTO;
 import org.banking.response.LoginResponseDTO;
 import org.banking.response.SignupResponseDTO;
 import org.banking.service.AuthService;

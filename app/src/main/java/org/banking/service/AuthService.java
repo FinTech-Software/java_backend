@@ -3,7 +3,7 @@ package org.banking.service;
 import jakarta.transaction.Transactional;
 import org.banking.entities.UserInfo;
 import org.banking.entities.UserRole;
-import org.banking.repository.SignupRequestDTO;
+import org.banking.request.SignupRequestDTO;
 import org.banking.repository.UserRepository;
 import org.banking.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
