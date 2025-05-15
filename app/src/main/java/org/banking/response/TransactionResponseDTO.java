@@ -18,7 +18,7 @@ public class TransactionResponseDTO {
     private double amount;
     private String description;
     private LocalDateTime date;
-    private boolean status;
+    private String status;
     private String type;
 
 }

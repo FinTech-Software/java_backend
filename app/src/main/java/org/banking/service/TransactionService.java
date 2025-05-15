@@ -108,6 +108,7 @@ public class TransactionService {
             dto.setAmount(txn.getAmount());
             dto.setDescription(txn.getDescription());
             dto.setDate(txn.getDate());
+            dto.setStatus(txn.getStatus());
 
             if (txn.getSender().getUsername().equals(username)) {
                 dto.setType("DEBITED");
