@@ -55,26 +55,29 @@ public class TransactionService {
             UserInfo receiver = transaction.getReceiver();
 
             if (sender.getAccountBalance() < amount) {
+                transaction.setStatus("failed");
+                transactionRepository.save(transaction);
                 return "Account balance is lower than the transaction amount.";
             }
 
-            // Update balances
             sender.setAccountBalance(sender.getAccountBalance() - amount);
             receiver.setAccountBalance(receiver.getAccountBalance() + amount);
 
-            // Persist updates
             userRepository.save(sender);
             userRepository.save(receiver);
 
-            transaction.setStatus(true);
+            transaction.setStatus("completed");
             transactionRepository.save(transaction);
 
             return "Transaction processed successfully";
         } catch (Exception e) {
+            transaction.setStatus("failed");
+            transactionRepository.save(transaction);
             e.printStackTrace();
             return "Transaction processing failed";
         }
     }
+
 
     /**
      * Get account balance of logged-in user

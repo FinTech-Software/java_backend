@@ -34,5 +34,5 @@ public class UserTransaction implements Serializable {
 
     private LocalDateTime date;
 
-    private Boolean status;
+    private String status;
 }

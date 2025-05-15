@@ -49,7 +49,7 @@ public class TransactionController {
             transaction.setReceiver(receiver);
             transaction.setAmount(request.getAmount());
             transaction.setDescription(request.getDescription());
-            transaction.setStatus(false);
+            transaction.setStatus("processing");
             transaction.setDate(LocalDateTime.now());
 
             // Send transaction to RabbitMQ for asynchronous processing
