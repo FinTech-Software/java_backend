@@ -28,6 +28,11 @@ public class TransactionController {
     @PostMapping("/send-money")
     public ResponseEntity<?> sendMoney(@RequestBody TransactionRequestDTO request) {
         try {
+            System.out.println(request);
+            // Validation checks for sender and receiver
+            if (request.getSender() == null || request.getReceiver() == null) {
+                return ResponseEntity.badRequest().body("Sender or Receiver ID cannot be null");
+            }
             // Transaction received from client
             UserInfo sender = userRepository.findById(request.getSender())
                     .orElseThrow(() -> new RuntimeException("Sender not found"));

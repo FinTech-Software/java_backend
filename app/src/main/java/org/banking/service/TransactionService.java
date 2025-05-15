@@ -6,11 +6,14 @@ import org.banking.entities.UserInfo;
 import org.banking.entities.UserTransaction;
 import org.banking.repository.UserRepository;
 import org.banking.repository.UserTransactionRepository;
+import org.banking.response.TransactionResponseDTO;
+import org.banking.response.UserDetailsResponseDTO;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -88,12 +91,38 @@ public class TransactionService {
     /**
      * Get all transactions where user is sender or receiver
      */
-    public Object getTransactions(String username) {
-        try {
-            UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
-            return transactionRepository.findBySenderOrReceiver(userInfo, userInfo);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
+    public List<TransactionResponseDTO> getTransactions(String username) {
+
+        UserInfo userInfo = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<UserTransaction> transactions = transactionRepository.findBySenderOrReceiver(userInfo, userInfo);
+
+        return transactions.stream().map(txn -> {
+            TransactionResponseDTO dto = new TransactionResponseDTO();
+            dto.setId(txn.getId());
+            dto.setSender(mapUserToDTO(txn.getSender()));
+            dto.setReceiver(mapUserToDTO(txn.getReceiver()));
+            dto.setAmount(txn.getAmount());
+            dto.setDescription(txn.getDescription());
+            dto.setDate(txn.getDate());
+
+            if (txn.getSender().getUsername().equals(username)) {
+                dto.setType("DEBITED");
+            } else {
+                dto.setType("CREDITED");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+
+    }
+
+    private UserDetailsResponseDTO mapUserToDTO(UserInfo user) {
+        UserDetailsResponseDTO dto = new UserDetailsResponseDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setBalance(user.getAccountBalance());
+        return dto;
     }
 }

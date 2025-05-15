@@ -12,5 +12,4 @@ public class TransactionRequestDTO {
     private String receiver;
     private int amount;
     private String description;
-    private Boolean status;
 }
