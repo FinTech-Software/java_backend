@@ -4,7 +4,9 @@ import org.banking.entities.UserInfo;
 import org.banking.entities.UserTransaction;
 import org.banking.repository.UserRepository;
 import org.banking.request.TransactionRequestDTO;
+import org.banking.response.TransactionResponseDTO;
 import org.banking.service.TransactionService;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("v1/transaction")
@@ -82,7 +86,10 @@ public class TransactionController {
     }
 
     @GetMapping("/getTransactionList")
-    public ResponseEntity<?> getTransactionList() {
+    public ResponseEntity<?> getTransactionList(
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Integer offset
+    ) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null || !authentication.isAuthenticated()) {
@@ -91,8 +98,25 @@ public class TransactionController {
             }
 
             String username = authentication.getName();
-            Object transactions = transactionService.getTransactions(username);
-            return ResponseEntity.ok(transactions);
+            List<TransactionResponseDTO> allTransactions = transactionService.getTransactions(username);
+
+            // Sort by date descending
+            allTransactions.sort((a, b) -> b.getDate().compareTo(a.getDate()));
+
+            // Default offset to 0 if not provided
+            if (offset == null) offset = 0;
+
+            // Apply limit and offset
+            if (limit != null) {
+                int toIndex = Math.min(offset + limit, allTransactions.size());
+                if (offset > allTransactions.size()) {
+                    return ResponseEntity.ok(Collections.emptyList());
+                }
+                allTransactions = allTransactions.subList(offset, toIndex);
+            }
+
+            return ResponseEntity.ok(allTransactions);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Exception occurred while fetching transactions: " + e.getMessage());
